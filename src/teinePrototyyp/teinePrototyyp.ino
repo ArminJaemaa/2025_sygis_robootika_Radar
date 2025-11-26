@@ -1,7 +1,6 @@
 #include <Servo.h>
 
 #define SIGNAL_PIN 5
-#define MAX_DISTANCE 300   // cm
 #define MOOTMISTE_ARV 10   // number of samples per position
 
 const int sensorPin = A0;
