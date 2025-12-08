@@ -1,21 +1,22 @@
-#include <Servo.h>
-#include <Adafruit_ILI9341.h>
-#include <Adafruit_GFX.h>
+//Vajalike teekide kasutusele võtt
+
+#include <Servo.h> //motori teek
+#include <Adafruit_ILI9341.h> //Ekraanile joonistamiseks vajalik teek #1
+#include <Adafruit_GFX.h> //Ekraanile joonistamiseks vajalik teek #2
 
 // MÕÕTMISEKS VAJALIKUD KONSTANDID JA MÕÕTMISPROTSESS
 #define SIGNAL_PIN 5
-#define MOOTMISTE_ARV 10   // number of samples per position
+#define SENSOR_PIN A0
 
-const int sensorPin = A0;
+const int MEASUREMENT_COUNT 10;   // igal positsioonil
 const long referenceMv = 5000;
 
-long pikkus;
-float kaugused[MOOTMISTE_ARV];
-float kaugus;
+float distance_arr[MEASUREMENT_COUNT];
+float distance;
 
-Servo mootor;
+Servo motor;
 
-//interpolation of distance at 250mV intervals
+//250mV intervallide järgi kauguse interpolatsioon
 const int TABLE_ENTRIES = 12;
 const int INTERVAL  = 250;
 static int distance[TABLE_ENTRIES] = {150,140,130,90,60,50,40,35,30,25,20,15};
@@ -29,9 +30,9 @@ int getDistance(int mV) {
   }
 }
 
-// --- median filter ---
+// --- mediaan filter ---
 float medianFilter(float arr[], int n) {
-  // simple bubble sort (ok for n=10)
+  // mõõdetud kaugused sorteeritakse minimaalsest maksimaalseni.
   for (int i = 0; i < n - 1; i++) {
     for (int j = 0; j < n - i - 1; j++) {
       if (arr[j] > arr[j + 1]) {
@@ -48,38 +49,36 @@ float medianFilter(float arr[], int n) {
 }
 
 
-// --- measure with filtering at angle i ---
-int mooda(int nurk) {
-  mootor.write(nurk);
-  delay(50); // give servo time to move
+// mõõdab ja filtreerib kaugused nurgal i
+int measure(int angle) {
+  motor.write(angle);
+  delay(50); // annab mootorile aega liikuda õigesse asendisse enne mõõtmist.
 
   int valid = 0;
-  for (int n = 0; n < MOOTMISTE_ARV; n++) {
-    int val = analogRead(sensorPin);
+  for (int n = 0; n < MEASUREMENT_COUNT; n++) {
+    int val = analogRead(SENSOR_PIN);
     int mV = (val * referenceMv) / 1023;
     int cm = getDistance(mV);
     if (cm >= 15 && cm <= 130) {
-      kaugused[valid++] = cm;
+      distance_arr[valid++] = cm;
     }
     delay(50);
   }
 
-  // --- Send clean serial output for dashboard ---
   if (valid > 2) {
-    float med = medianFilter(kaugused, valid);
-    // Optional: compute trimmed mean for extra smoothing
+    float med = medianFilter(distance_arr, valid);
     float sum = 0;
     int count = 0;
     for (int j = 0; j < valid; j++) {
-      if (abs(kaugused[j] - med) < 0.2 * med) { // keep within ±20% of median
-        sum += kaugused[j];
+      if (abs(distance_arr[j] - med) < 0.2 * med) { //erineb mediaanist maksimaalselt +/-20%
+        sum += distance_arr[j];
         count++;
       }
     }
     float avg = (count > 0) ? sum / count : med;
 
     return avg;
-  } else {
+  } else { // tagastab 0 kui ei saadud vähemlt kolme korrektset mõõtmistulemust
     return 0;
   }
 }
@@ -92,23 +91,24 @@ int mooda(int nurk) {
 
 Adafruit_ILI9341 tft(TFT_CS, TFT_DC, TFT_RST);
 
-//Mõõtmed
+//ekraani mõõtmed
 const int16_t W = 320;
 const int16_t H = 240;
 const int16_t CX = W / 2;
-const int16_t CY = H - 10;        // bottom, with small margin
-const int16_t RADAR_R = 150;      // radius in pixels
-int16_t eelmine_nurk = 10;
+const int16_t CY = H - 10;        // Alumisest servast 10 pikslit eemal
+const int16_t RADAR_R = 150;      // raadius pikslites
+int16_t prev_angle = 10;
 
-// Colors
+// joonistamisel kasutatavad värvid
 const uint16_t COL_BG    = ILI9341_BLACK;
 const uint16_t COL_GRID  = ILI9341_DARKGREEN;
 const uint16_t COL_SWEEP = ILI9341_GREEN;
 const uint16_t COL_POINT = ILI9341_RED;
 
-//punktide salvestamine
+//punktide salvestamine ennikusse
 int points[32];
 
+//Radari põhja/aluse joonistamine
 void drawGrid(){
   tft.fillScreen(COL_BG);
   for(int i=50; i<=RADAR_R; i+=50){
@@ -121,18 +121,18 @@ void drawGrid(){
     tft.drawLine(CX, CY, x, y, COL_GRID);
   }
 }
-
-void drawSweep(int nurk){
-  //vana sweep linei kustutamine
-  float rad_eelmine = radians(eelmine_nurk);
+//Radar liikumist illustreeriva joone joonistamine ja liigutamine
+void drawSweep(int angle){
+  //vana kustutamine
+  float rad_eelmine = radians(prev_angle);
   int16_t x_eelmine = CX + (int16_t)(RADAR_R * cos(rad_eelmine));
   int16_t y_eelmine = CY - (int16_t)(RADAR_R * sin(rad_eelmine));  
   tft.drawLine(CX, CY, x_eelmine, y_eelmine, COL_BG);
 
-  deletePoint(nurk);
+  deletePoint(angle);
 
-  //gridiga kattumise kohtadel redraw grid
-  if((eelmine_nurk-10) % 20 == 0){
+  //Radari aluse/põhja joontega kattumisel üle joonistamine.
+  if((prev_angle-10) % 20 == 0){
     //joonistame uuesti
     tft.drawLine(CX, CY, x_eelmine, y_eelmine, COL_GRID);
   }
@@ -140,36 +140,35 @@ void drawSweep(int nurk){
   for(int i=50; i<=RADAR_R; i+=50){
     tft.drawCircle(CX, CY, i, COL_GRID);
   }
-  // nurk 0..180, 0° = right, 90° = straight up, 180° = left
-  float rad = radians(nurk);
-  eelmine_nurk = nurk;
+  float rad = radians(angle);
+  prev_angle = angle;
   int16_t x = CX + (int16_t)(RADAR_R * cos(rad));
   int16_t y = CY - (int16_t)(RADAR_R * sin(rad));
   tft.drawLine(CX, CY, x, y, COL_SWEEP);
   
-  drawPoint(nurk);
+  drawPoint(angle);
 }
 //punkti kustutamine sweeperi hetke nurga pealt.
-void deletePoint(int nurk){
-  float rad = radians(nurk);
-  int16_t x = CX + (int16_t)(points[(nurk-10)/5] * cos(rad));
-  int16_t y = CY - (int16_t)(points[(nurk-10)/5] * sin(rad));
-  tft.drawPixel(x, y, COL_BG);
+void deletePoint(int angle){
+  float rad = radians(angle);
+  int16_t x = CX + (int16_t)(points[(angle-10)/5] * cos(rad));
+  int16_t y = CY - (int16_t)(points[(angle-10)/5] * sin(rad));
+  tft.fillCircle(x, y, 3, COL_BG);
 }
 //punktide joonistamine vastavalt mõõtmistulemustele
-void drawPoint(int nurk){
-  int kaugus = mooda(nurk);
-  float rad = radians(nurk);
-  int16_t x = CX + (int16_t)(kaugus * cos(rad));
-  int16_t y = CY - (int16_t)(kaugus * sin(rad));
-  tft.drawPixel(x, y, COL_POINT);
-  points[(nurk-10)/5] = kaugus;
+void drawPoint(int angle){
+  int distance = measure(angle);
+  float rad = radians(angle);
+  int16_t x = CX + (int16_t)(distance * cos(rad));
+  int16_t y = CY - (int16_t)(distance * sin(rad));
+  tft.fillCircle(x, y, 3, COL_POINT);
+  points[(angle-10)/5] = distance;
 }
 
 //SETUP JA VOID
 void setup() {
   pinMode(SIGNAL_PIN, OUTPUT);
-  mootor.attach(SIGNAL_PIN);
+  motor.attach(SIGNAL_PIN);
   Serial.begin(9600);
 
   tft.begin();
@@ -179,11 +178,11 @@ void setup() {
 }
 
 void loop() {
-  // Sweep right
+  // liikumine paremale
   for (int i = 10; i <= 170; i += 5) {
     drawSweep(i);
   }
-  // Sweep left
+  // liikumine vasakule
   for (int i = 170; i >= 10; i -= 5) {
     drawSweep(i);
   }
