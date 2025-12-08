@@ -3,95 +3,50 @@
 ## 1. Projekti eesmärk ja seadme lühikirjeldus
 **Mis asi see on, mida ja miks me teeme? Millist praktilist probleemi see lahendab?**
 
-Näide stiilist:
-- Meie projekti eesmärk on luua ventilaator, mida saab juhtida infrapuna puldiga.
-- Seadet saab kasutada näiteks ruumi jahutamiseks olukorras, kus käega lülitile ulatamine on ebamugav.
-- Peamised komponendid: elektrimootor, servo, ventilaatori labad (3D prinditud), Arduino mikrokontroller.
-
-👉 _Asenda see kirjeldus enda seadme kirjeldusega._
+- Meie projekti eesmärk on luua radar, mis tuvastab infrapuna sensoriga kuni 150 cm kaugusel olevaid objekte 160 kraadises vaatlusnurgas.
+- Süsteem eraldiseisvana mingit olulist probleemi ei lahenda, kuid kui seda integreerida mõne muu süsteemiga, siis võib ta lahendada mitmeid probleeme. Seadet saab kasutada näiteks autonoomsete seadmetel kokkupõrgete vältimiseks muude objektidega.
+- Peamised komponendid: servo mootor, infrapuna sensor, tft ekraan, karp (3d prinditud), Arduino.
 
 ---
 
 ## 2. Sisendite loetelu
 **Millised on süsteemi poolt loetavad / mõõdetavad sisendid? Millega neid mõõdetakse / tuvastatakse?**
 
-Kirjelda kõik sisendid eraldi punktidena.  
-Näited (asenda enda projektiga):
-
-- Nupp "vasakule" puldil → IR-sensor loeb signaali
-- Nupp "paremale" puldil → IR-sensor loeb signaali
-- Nupp "+" puldil → IR-sensor loeb signaali (tõsta kiirust)
-- Nupp "-" puldil → IR-sensor loeb signaali (vähenda kiirust)
-- ON/OFF nupp → IR-sensor loeb signaali
-
-👉 _Kui sinu süsteem kasutab muid sensoreid (ultraheli, temperatuuriandur, valgusandur, joystick, BLE telefonis vms), kirjelda need siin koos füüsilise sisendi allikaga._
+- Infapuna sensor - Mõõdab pinget ja Arduino arvutab selle põhjal kauguse.
 
 ---
 
 ## 3. Väljundite loetelu
 **Mida süsteem teeb / muudab? Millega väljund realiseeritakse?**
 
-Näited (asenda enda projektiga):
-- Ventilaator pöörleb kiiremini / aeglasemalt → DC mootor
-- Ventilaator suunab õhu vasakule / paremale → servo
-- LED süttib / kustub → LED
-- Ekraanile kuvatakse temperatuur → OLED ekraan
+- Arduino arvutab vastavalt infrapuna pingele kauguse ja kuvab ekraanil vastavalt arvutatud kaugusele ja servo mootori hetkenurgale objekti punase täpi kujul.
 
 ---
 
 ## 4. Nõuded loodavale seadmele
 **Mis peab toimuma, kui kasutaja teeb mingi toimingu? Kirjelda käitumisloogika.**
 
-Kirjuta reeglid kujul "Kui X, siis Y".  
-Näited (kohanda enda projektile):
-
-- Kui vajutatakse ON/OFF nuppu, siis:
-  - kui ventilaator on väljas → ventilaator lülitub sisse keskmise kiirusega;
-  - kui ventilaator töötab → ventilaator pöördub keskasendisse ja lülitub välja.
-
-- Kui vajutatakse vasak/noole nuppu, liigub ventilaatori pea iga vajutusega X kraadi vasakule, kuni vasak piir on käes. Kui piir käes, siis rohkem ei liigu.
-
-- Kui ventilaator töötab maksimumkiirusel ja vajutatakse "+" → kiirus ei suurene enam.
-
-👉 _Pane siia KÕIK kokkulepitud reeglid. Need reeglid on alus, mille järgi hiljem hinnatakse, kas teie lahendus vastab eesmärgile._
+- Kuna tegemist ei ole otseselt interaktiivse süsteemiga, siis peale seadme sisse lülitamist on kasutaja ülesanne jälgida ekraanil toimuvat ja käituda vastavalt.
 
 ---
 
 ## 5. Süsteemi füüsiliste komponentide loetelu
 **Millest seade koosneb? Lisa lingid või täpsed nimed, et keegi teine saaks sama asja uuesti osta / teha.**
 
-Tabelina või punktidena. Nt:
-
-- Arduino Uno (mikrokontroller)
-- IR-vastuvõtja + pult (tüüp: XY123)  
-- Väike elektrimootor (DC, ___ V)
-- Mootoridraiver (L298N vms)
-- Servo (mudel: SG90 / MG90S / muu)
-- 3D-prinditud ventilaatori labad (STL-failid lisage kataloogi `hardware/`)
-- Toiteallikas (___ V / ___ A)
-
-👉 _Kui ise tegite 3D mudeli, lisage STL või Fusion faili `hardware/` alla. Kui kasutasite netist leitud mudelit, märkige allikas._
+- Arduino Uno R3
+- SHARP GP2Y0A02YK0F IR-distantssensor - Mõõdab vahemaad 20–150 cm täpsusega
+- DM996 Servo mootor - Pöörab sensorit 160° ulatuses
+- 2.8” SPI ILI9341 TFT ekraan - Kuvab radaripildi ja täppe
+- 2x 3V to 5V Level converter 2PH240074A
+- USB-toide arvutist - Toidab kogu süsteemi
+- 3D-prinditud ”maja” - Hoiab servo + sensori kindlas asendis, tagab stabiilse mõõtmise
 
 ---
 
 ## 6. Ühendusskeem
 **Kuidas kõik osad on omavahel ühendatud?**
 
-- Lisa siia pilt või skeemi kirjeldus.
-- Fail `hardware/wiring-diagram.png` peab näitama vähemalt:
-  - milline pin Arduinol läheb millise komponendi sisendisse,
-  - kuidas on toide ühendatud.
-
-Kui skeemi pole veel joonistatud, siis vähemalt kirjelda tekstina, nt:
-
-- IR-sensor OUT → Arduino digipin 7  
-- Servo signaal → Arduino digipin 6  
-- Mootoridraiveri IN1 → Arduino digipin 2  
-- Mootoridraiveri IN2 → Arduino digipin 3  
-- Mootoridraiveri ENA → Arduino pin 5 (PWM)  
-- GND kõik ühises massis
-
-👉 _Skeem peab lõpuks olemas olema, mitte ainult tekst._
+![Ühendusskeem](https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/image.png)
 
 ---
 
