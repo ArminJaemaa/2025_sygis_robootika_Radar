@@ -27,6 +27,9 @@
 **Mis peab toimuma, kui kasutaja teeb mingi toimingu? Kirjelda käitumisloogika.**
 
 - Kuna tegemist ei ole otseselt interaktiivse süsteemiga, siis peale seadme sisse lülitamist on kasutaja ülesanne jälgida ekraanil toimuvat ja käituda vastavalt.
+- Süsteemi käivitudes peab mootor liikuma algusesse ning ekraanile joonistuma esmane radari kujutis. Misjärel käivitub järgmine tsükkel:
+- 1) Servot liigutatakse 5 kraadi võrra edasi; 2) Mõõdetakse n korda (hetkel 10) kaugust selle nurga peal; 3) Filtreeritakse mõõtmisvead välja ning sobilike tulemustega arvutatakse keskmine ning kontrollitakse, et see jääks mediaanist +/-20% sisse; 4) Kustutatakse vana "Sweep line" ning sellel nurgal varem eksisteerinud täpp ja joonistatake liigutud nurga peale uus Sweep line ja uus täpp; 5) Saadud kauguse ja hetkelise servo nurga abil joonistatakse ekraanil radari alusele vastavasse kohta punane täpp;
+- Kui jõutakse 170 kraadi peale, pööratakse suund ringi ning alustatakse sama tsükli kordamist teises suunas kuni jõutakse 10 kraadini ning pööratakse taaskord ümber ja jätkatakse tegevust kuni toide kaob või esineb mingi süsteemi lõhkuv viga. 
 
 ---
 
