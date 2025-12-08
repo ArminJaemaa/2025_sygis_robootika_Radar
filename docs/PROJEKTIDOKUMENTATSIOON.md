@@ -48,6 +48,15 @@
 
 ![Ühendusskeem](https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/image.png)
 
+- TFT ekraani ühendused, kuna skeemil on neid täpseid pin-e näha ainult pin descriptionil Fritzingus
+- Pin 8 -> TFT CS pin
+- Pin 9 -> TFT RST pin
+- Pin 10 -> TFT D/C pin
+- Pin 11 -> TFT MOSI pin
+- pin 13 -> TFT SCK pin
+- 5V -> TFT VCC pin
+- GND -> TFT GND pin
+
 ---
 
 ## 7. Süsteemi juhtiv kood (või pseudokood)
