@@ -16,12 +16,12 @@ Täida oma projekti järgi. Eesmärk on, et järgmine tudeng saaks sama asja uue
 - Arduino R3 – _https://www.oomipood.ee/product/a000066_arduino_uno_rev3_
 - Micro servo – _https://www.oomipood.ee/product/oky8003_1_micro_servo_mootor_3_5_6v_1_2kg_cm_4_8v_sg90_360_deg_
 - IR sensor - _https://www.eztronics.nl/webshop3/index.php?route=product/product&product_id=489_
-- 3D prinditud alus - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/Radar_alus.stl_
-- 3D prinditud IR sensori mount - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/IR_GP2D12_Mount.stl_
-- 3D prinditud karp - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/ülemine_osa_auguga.stl_
-- 3D prinditud kinnitused - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/kinnitused.stl_
-- 3D prinditud kaas - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/kaas.stl_
-- 3D prinditud kõrgendus - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/kõrgendus.stl_ 
+- 3D prinditud alus - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/stl_files/Radar_alus.stl_
+- 3D prinditud IR sensori mount -_https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/stl_files/IR_GP2D12_Mount.stl_
+- 3D prinditud karp - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/stl_files/ülemine_osa_auguga.stl_
+- 3D prinditud kinnitused - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/stl_files/kinnitused.stl_
+- 3D prinditud kaas - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/stl_files/kaas.stl_
+- 3D prinditud kõrgendus - _https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/media/stl_files/kõrgendus.stl_ 
 
 > Kui kasutasite ise disainitud 3D detaile, lisage STL-failid siia samasse kataloogi.
 > Kui tegite Fusion360 / FreeCAD mudeli, lisage ka lähtefail (.f3d, .step jne).
