@@ -64,8 +64,9 @@
 
 ## 7. Süsteemi juhtiv kood (või pseudokood)
 **Kirjelda programmi loogikat nii, et seda on võimalik aru saada ka hiljem.**  
-Kui kood töötab, pane siia lühike selgitus + viide failile `src/projektinimi.ino`.  
-Kui kood pole veel valmis, lisa siia pseudokood.
 
 [Koodi fail /src kaustas](https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/src/teinePrototyypEkraaniga/teinePrototyypEkraaniga.ino)
 Kood on kirjeldatud võimalikult täpselt kommentaaridega
+- 1) Servot liigutatakse 5 kraadi võrra edasi; 2) Mõõdetakse n korda (hetkel 10) kaugust selle nurga peal; 3) Filtreeritakse mõõtmisvead välja ning sobilike tulemustega arvutatakse keskmine ning kontrollitakse, et see jääks mediaanist +/-20% sisse; 4) Kustutatakse vana "Sweep line" ning sellel nurgal varem eksisteerinud täpp ja joonistatake liigutud nurga peale uus Sweep line ja uus täpp; 5) Saadud kauguse ja hetkelise servo nurga abil joonistatakse ekraanil radari alusele vastavasse kohta punane täpp;
+- Kui jõutakse 170 kraadi peale, pööratakse suund ringi ning alustatakse sama tsükli kordamist teises suunas kuni jõutakse 10 kraadini ning pööratakse taaskord ümber ja jätkatakse tegevust kuni toide kaob või esineb mingi süsteemi lõhkuv viga. 
+
