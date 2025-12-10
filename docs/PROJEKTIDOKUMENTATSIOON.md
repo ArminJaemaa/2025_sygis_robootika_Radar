@@ -66,3 +66,6 @@
 **Kirjelda programmi loogikat nii, et seda on võimalik aru saada ka hiljem.**  
 Kui kood töötab, pane siia lühike selgitus + viide failile `src/projektinimi.ino`.  
 Kui kood pole veel valmis, lisa siia pseudokood.
+
+[Koodi fail /src kaustas](https://github.com/ArminJaemaa/2025_sygis_robootika_Radar/blob/main/src/teinePrototyypEkraaniga/teinePrototyypEkraaniga.ino)
+Kood on kirjeldatud võimalikult täpselt kommentaaridega
